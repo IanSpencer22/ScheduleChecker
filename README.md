@@ -1,4 +1,4 @@
-# Schedule Checker
+# Schedule Checker (Currently live at https://www.ianbuilds.dev/)
 
 A modern web application that helps you quickly check your availability by integrating with your Outlook calendar. See your free time at a glance without having to manually scan through your busy calendar.
 

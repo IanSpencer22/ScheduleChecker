@@ -1,7 +1,7 @@
 import { Client } from "@microsoft/microsoft-graph-client";
 import { CalendarEvent, AvailabilityRequest, AvailabilityResult, TimeSlot } from "../types/calendar";
 import { format, parseISO, startOfDay, endOfDay, addMinutes, isWithinInterval, isSameDay, differenceInMinutes } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
+import { utcToZonedTime } from "date-fns-tz";
 
 export class CalendarService {
   private graphClient: Client;
@@ -51,8 +51,8 @@ export class CalendarService {
 
           // Filter events that overlap the selected window (regardless of start date)
           const dayEvents = events.filter(event => {
-            const eventStart = adjustByMinus5Hours(toZonedTime(parseISO(event.start.dateTime), timeZone));
-            const eventEnd = adjustByMinus5Hours(toZonedTime(parseISO(event.end.dateTime), timeZone));
+            const eventStart = adjustByMinus5Hours(utcToZonedTime(parseISO(event.start.dateTime), timeZone));
+            const eventEnd = adjustByMinus5Hours(utcToZonedTime(parseISO(event.end.dateTime), timeZone));
             return (
               isSameDay(eventStart, currentDate) ||
               (eventStart < availableEnd && eventEnd > availableStart &&
@@ -61,22 +61,22 @@ export class CalendarService {
                   eventStart <= availableEnd && eventEnd >= availableStart)))
             );
           }).filter(event => {
-            const eventStart = adjustByMinus5Hours(toZonedTime(parseISO(event.start.dateTime), timeZone));
-            const eventEnd = adjustByMinus5Hours(toZonedTime(parseISO(event.end.dateTime), timeZone));
+            const eventStart = adjustByMinus5Hours(utcToZonedTime(parseISO(event.start.dateTime), timeZone));
+            const eventEnd = adjustByMinus5Hours(utcToZonedTime(parseISO(event.end.dateTime), timeZone));
             return eventEnd > availableStart && eventStart < availableEnd;
           });
 
           // Sort events by start time
           dayEvents.sort((a, b) => {
-            const aStart = adjustByMinus5Hours(toZonedTime(parseISO(a.start.dateTime), timeZone)).getTime();
-            const bStart = adjustByMinus5Hours(toZonedTime(parseISO(b.start.dateTime), timeZone)).getTime();
+            const aStart = adjustByMinus5Hours(utcToZonedTime(parseISO(a.start.dateTime), timeZone)).getTime();
+            const bStart = adjustByMinus5Hours(utcToZonedTime(parseISO(b.start.dateTime), timeZone)).getTime();
             return aStart - bStart;
           });
 
           // Build busy slots as actual event blocks, clipped to the window
           const busySlots = dayEvents.map(event => {
-            const eventStart = adjustByMinus5Hours(toZonedTime(parseISO(event.start.dateTime), timeZone));
-            const eventEnd = adjustByMinus5Hours(toZonedTime(parseISO(event.end.dateTime), timeZone));
+            const eventStart = adjustByMinus5Hours(utcToZonedTime(parseISO(event.start.dateTime), timeZone));
+            const eventEnd = adjustByMinus5Hours(utcToZonedTime(parseISO(event.end.dateTime), timeZone));
             // Clip event to the available window
             const clippedStart = eventStart < availableStart ? availableStart : eventStart;
             const clippedEnd = eventEnd > availableEnd ? availableEnd : eventEnd;

@@ -19,7 +19,7 @@
     "tailwindcss": "^3.3.6",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.32",
-    "date-fns-tz": "^3.3.0"
+    "date-fns-tz": "^2.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
